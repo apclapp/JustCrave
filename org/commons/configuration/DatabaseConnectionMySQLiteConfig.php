@@ -5,7 +5,7 @@
  * @description This class defines configuration settings for database creation.
  */
 
-class DatabaseConnectionConfig extends GenericConfiguration {
+class DatabaseConnectionMySQLiteConfig extends GenericConfiguration {
 	protected $SETTINGS = array(
 		"CFG_DB_PATH" => array(
 			"The path to where the database is stored",

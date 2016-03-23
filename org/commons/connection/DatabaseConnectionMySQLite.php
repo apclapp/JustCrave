@@ -1,27 +1,33 @@
 <?php namespace org\commons\connection;
 /*
- * @classname DatabaseConnection
+ * @classname DatabaseConnectionMySQLite
  * @author apclapp
  * @description This class handles connections to this program's database
  */
 
-use org\commons\configuration\DatabaseConnectionConfig as Config;
+use org\commons\configuration\DatabaseConnectionMySQLiteConfig as Config;
 use \PDO as PDO;
 
-class DatabaseConnection {
-	private $CFG;
+class DatabaseConnectionMySQLite implements DatabaseConnection {
+
 	private $DB;
+	private $CFG;
 
 	public function __construct(Config $Config) {
 
 		// Load configuration settings for this class
 		$this->CFG = $Config;
 
-		// Create or connect to the SQLite database
+		// Create or connect to the database
 		$this->connect();
 	}
 
-	private function connect() {
+	public function __destruct() {
+		// Close the connection to the database
+		$this->close();
+	}
+
+	public function connect() {
 
 		// Sanitize the path to the database file
 		$db_path = rtrim($this->CFG->getSetting('CFG_DB_PATH'), "\\/");
@@ -33,6 +39,10 @@ class DatabaseConnection {
 			$this->DB = new PDO('sqlite:' . $db_path . $this->CFG->getSetting('CFG_CUSTOM_FILENAME') . '.sqlite');
 		}
 
+	}
+
+	public function close() {
+		// No action necessary
 	}
 
 	public function query($query_string) {
@@ -67,6 +77,11 @@ class DatabaseConnection {
 
 		// Return the result
 		return $result;
+	}
+
+	public function getLastRowCount() {
+		// Not yet implemented
+		return FALSE;
 	}
 
 	public function getLastInsertId() {

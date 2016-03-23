@@ -30,13 +30,15 @@ class APIConnectionTest {
 	private function doAPICall() {
 		$this->setAPIHeaders();
 
-		$postcode = "BA23QB";
+		$postcode = isset($_REQUEST['postcode']) ? $_REQUEST['postcode'] : 'BA23QB';
 		$item_result = $this->getItemsForPostCode($postcode);
 
-		var_dump($item_result);
+		echo json_encode($item_result, JSON_PRETTY_PRINT);
 	}
 
 	private function setAPIHeaders() {
+		header('Content-Type: application/json');
+
 		$this->WebConnectionLocal->setHeaderProperty('Accept-Tenant', 'uk');
 		$this->WebConnectionLocal->setHeaderProperty('Accept-Language', 'en-GB');
 		$this->WebConnectionLocal->setHeaderProperty('Authorization', 'Basic VGVjaFRlc3RBUEk6dXNlcjI=');
@@ -46,6 +48,9 @@ class APIConnectionTest {
 	private function getItemsForPostCode($postcode) {
 		$restaurant_set = $this->getRestaurantsForPostcode($postcode);
 
+		// trim the results to two items:
+		array_splice($restaurant_set, 2);
+
 		foreach ($restaurant_set as &$restaurant) {
 			$restaurant['items'] = array();
 			$menu_set = $this->getMenusForRestaurant($restaurant['id']);
@@ -54,8 +59,8 @@ class APIConnectionTest {
 				$category_set = $this->getCategoriesForRestaurant($menu);
 
 				foreach ($category_set as $category) {
-					$category_items = $this->getItemsForCategory($menu, $category);
-					$restaurant['items'] = array_merge($restaurant['items'], $category_items);
+					$category_items = $this->getItemsForCategory($menu, $category['id']);
+					$restaurant['items'][$category['name']] = $category_items;
 				}
 			}
 		}
@@ -71,7 +76,7 @@ class APIConnectionTest {
 
 		foreach ($decoded_response->Restaurants as $restaurant) {
 			$result_restaurants[] = array(
-				'name' => $restaurant->Name,
+				'name' => trim($restaurant->Name),
 				'id' => $restaurant->Id,
 			);
 		}
@@ -99,7 +104,10 @@ class APIConnectionTest {
 		$result_categories = array();
 
 		foreach ($decoded_response->Categories as $category) {
-			$result_categories[] = $category->Id;
+			$result_categories[] = array(
+				'name' => trim($category->Name),
+				'id' => $category->Id,
+			);
 		}
 
 		return $result_categories;
@@ -113,8 +121,9 @@ class APIConnectionTest {
 
 		foreach ($decoded_response->Products as $product) {
 			$result_items[] = array(
-				'name' => $product->Name,
-				'synonym' => $product->Synonym,
+				'name' => trim($product->Name),
+				'synonym' => trim($product->Synonym),
+				'description' => trim($product->Description),
 				'price' => $product->Price,
 			);
 		}

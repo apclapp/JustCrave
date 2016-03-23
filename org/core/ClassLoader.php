@@ -30,14 +30,7 @@ class ClassLoader {
 
 		$fullPath = __DIR__ . DIRECTORY_SEPARATOR . $backString . $removedNamespace;
 
-		// echo $fullPath;
-		//var_dump($fileName);
-		echo "<small>loaded</small> <font color=\"#cc0000\">'$fileName'</font> <br />";
-
-		// var_dump($backString . $fileName);
-		// echo $className;
-		//var_dump($className);
-		// var_dump(__NAMESPACE__);
+		// echo "<small>loaded</small> <font color=\"#cc0000\">'$fileName'</font> <br />";
 
 		require $fullPath;
 	}
