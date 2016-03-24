@@ -48,7 +48,7 @@ var Resultspage = React.createClass({
     _getResults: function(postcode, query, callback) {
 
         var ajax = new Ajax({
-            url: '/org/test/FakeApiEndpoint.php?postcode=' + postcode + '&query=' + query,
+            url: '/org/test/JustCraveAPITest.php?postcode=' + postcode + '&query=' + query,
             method: 'GET'
         });
 
