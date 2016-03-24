@@ -1,0 +1,17 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,700,300);
+
+* {
+    box-sizing: border-box;
+    font-family: "Raleway",sans-serif;
+}
+
+html, body {
+    height: 100%;
+}
+
+.homepage, .resultspage {
+    margin:  auto;
+    padding-top: 100px;
+    max-width: 1000px;
+    width: 95%;
+}
