@@ -63,7 +63,8 @@ class JustCraveApiTest {
 			        INNER JOIN
 			    `justcrave`.`restaurants` r ON i.restaurantId = r.restaurantId
 			WHERE
-			  CONCAT_WS(' ', c.categoryName, i.itemName, i.itemSynonym)  LIKE '%$search_text%';";
+				MATCH(i.itemName) AGAINST('$search_text' IN NATURAL LANGUAGE MODE);";
+		// CONCAT_WS(' ', c.categoryName, i.itemName, i.itemSynonym)  LIKE '%$search_text%';";
 
 		$sample_search_result = $this->Database->query($sample_search_query);
 
