@@ -8,3 +8,10 @@
 html, body {
     height: 100%;
 }
+
+.homepage, .resultspage {
+    margin:  auto;
+    padding-top: 100px;
+    max-width: 1000px;
+    width: 95%;
+}
