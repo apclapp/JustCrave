@@ -13,7 +13,7 @@ var Resultspage = React.createClass({
         var that = this;
 
         if(!this.state.results) {
-            this._getResults(this.state.postcode, this.state.search, function(response) {
+            this._getResults(this.props.postcode, this.props.search, function(response) {
                 that.setState({
                     results: response
                 });
