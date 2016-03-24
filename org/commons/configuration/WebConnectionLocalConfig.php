@@ -9,7 +9,8 @@ class WebConnectionLocalConfig extends GenericConfiguration {
 	protected $SETTINGS = array(
 		"CFG_USER_AGENT" => array(
 			"The user agent to pose as for cURL requests",
-			"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.235",
+			"JustCrave (Development 0.1) No harm intended, heavy caching (apclapp@gmail.com, saborrie@gmail.com)",
+			// "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.235",
 		),
 		"CFG_FOLLOW_REDIRECT" => array(
 			"Whether cURL requests should follow redirect requests",

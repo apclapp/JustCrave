@@ -58,10 +58,12 @@ class DatabaseConnectionMySQL implements DatabaseConnection {
 		}
 
 		// Record the query row count
-		$this->last_row_count = $result_obj->num_rows;
+		$this->last_row_count = $this->DB->affected_rows;
 
-		while ($row = $result_obj->fetch_assoc()) {
-			$return_rows[] = $row;
+		if ($this->strStartsWith($query_string, 'SELECT')) {
+			while ($row = $result_obj->fetch_assoc()) {
+				$return_rows[] = $row;
+			}
 		}
 
 		// Record the insert id
@@ -86,6 +88,10 @@ class DatabaseConnectionMySQL implements DatabaseConnection {
 
 	public function escapeString($unescaped_string) {
 		return $this->DB->real_escape_string($unescaped_string);
+	}
+
+	private function strStartsWith($haystack, $needle) {
+		return substr($haystack, 0, strlen($needle)) === $needle;
 	}
 }
 

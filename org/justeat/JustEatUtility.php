@@ -1,62 +1,42 @@
-<?php namespace org\test;
+<?php namespace org\justeat;
 /*
- * @classname APIConnectionTest
+ * @classname JustEatUtility
  * @author apclapp
- * @description This class creates a connection to the Just-Eat API and dumps the response.
+ * @description This class handles making api calls and getting responses from Just Eat
  */
-
-// An autoloader needs to be required
-require_once '../core/ClassLoader.php';
 
 use org\commons\connection\WebConnectionLocal;
 
-class APIConnectionTest {
-
+class JustEatUtility {
 	private $WebConnectionLocal;
 
 	public function __construct() {
-		$this->init();
-		$this->run();
-	}
-
-	protected function init() {
+		// Initiate the web connection
 		$this->WebConnectionLocal = new WebConnectionLocal();
-	}
 
-	protected function run() {
-		$this->doAPICall();
-	}
-
-	private function doAPICall() {
+		// Set the headers required for our API requests
 		$this->setAPIHeaders();
-
-		$postcode = isset($_REQUEST['postcode']) ? $_REQUEST['postcode'] : 'BA23QB';
-		$item_result = $this->getItemsForPostCode($postcode);
-
-		echo json_encode($item_result, JSON_PRETTY_PRINT);
 	}
 
 	private function setAPIHeaders() {
-		header('Content-Type: application/json');
-
 		$this->WebConnectionLocal->setHeaderProperty('Accept-Tenant', 'uk');
 		$this->WebConnectionLocal->setHeaderProperty('Accept-Language', 'en-GB');
 		$this->WebConnectionLocal->setHeaderProperty('Authorization', 'Basic VGVjaFRlc3RBUEk6dXNlcjI=');
 		$this->WebConnectionLocal->setHeaderProperty('Host', 'public.je-apis.com');
 	}
 
-	private function getItemsForPostCode($postcode) {
+	public function getAllItemsForPostCode($postcode) {
 		$restaurant_set = $this->getRestaurantsForPostcode($postcode);
 
 		// trim the results to two items:
-		array_splice($restaurant_set, 2);
+		// array_splice($restaurant_set, 1);
 
 		foreach ($restaurant_set as &$restaurant) {
 			$restaurant['items'] = array();
 			$menu_set = $this->getMenusForRestaurant($restaurant['id']);
 
 			foreach ($menu_set as $menu) {
-				$category_set = $this->getCategoriesForRestaurant($menu);
+				$category_set = $this->getCategoriesForMenu($menu);
 
 				foreach ($category_set as $category) {
 					$category_items = $this->getItemsForCategory($menu, $category['id']);
@@ -68,7 +48,7 @@ class APIConnectionTest {
 		return $restaurant_set;
 	}
 
-	private function getRestaurantsForPostcode($postcode) {
+	public function getRestaurantsForPostcode($postcode) {
 		$response = $this->WebConnectionLocal->getURL("https://public.je-apis.com/restaurants?q=$postcode");
 		$decoded_response = json_decode($response);
 
@@ -84,7 +64,7 @@ class APIConnectionTest {
 		return $result_restaurants;
 	}
 
-	private function getMenusForRestaurant($restaurantId) {
+	public function getMenusForRestaurant($restaurantId) {
 		$response = $this->WebConnectionLocal->getURL('https://public.je-apis.com/restaurants/' . $restaurantId . '/menus');
 		$decoded_response = json_decode($response);
 
@@ -97,7 +77,7 @@ class APIConnectionTest {
 		return $result_menus;
 	}
 
-	private function getCategoriesForRestaurant($menuId) {
+	public function getCategoriesForMenu($menuId) {
 		$response = $this->WebConnectionLocal->getURL('https://public.je-apis.com/menus/' . $menuId . '/productcategories');
 		$decoded_response = json_decode($response);
 
@@ -113,7 +93,20 @@ class APIConnectionTest {
 		return $result_categories;
 	}
 
-	private function getItemsForCategory($menuId, $categoryId) {
+	public function getCategoriesForRestaurant($restaurantId) {
+
+		$return_categories = array();
+
+		$menu_set = $this->getMenusForRestaurant($restaurantId);
+
+		foreach ($menu_set as $menu) {
+			$return_categories[$menu] = $this->getCategoriesForMenu($menu);
+		}
+
+		return $return_categories;
+	}
+
+	public function getItemsForCategory($menuId, $categoryId) {
 		$response = $this->WebConnectionLocal->getURL("https://public.je-apis.com/menus/$menuId/productcategories/$categoryId/products");
 		$decoded_response = json_decode($response);
 
@@ -121,6 +114,7 @@ class APIConnectionTest {
 
 		foreach ($decoded_response->Products as $product) {
 			$result_items[] = array(
+				'id' => trim($product->Id),
 				'name' => trim($product->Name),
 				'synonym' => trim($product->Synonym),
 				'description' => trim($product->Description),
@@ -131,6 +125,4 @@ class APIConnectionTest {
 		return $result_items;
 	}
 }
-
-$APIConnectionTest = new APIConnectionTest();
 ?>
