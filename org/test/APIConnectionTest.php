@@ -40,5 +40,9 @@ class APIConnectionTest {
 	}
 }
 
-$APIConnectionTest = new APIConnectionTest();
+if (!empty($_REQUEST['verify_big_query'])) {
+	$APIConnectionTest = new APIConnectionTest();
+} else {
+	echo 'This page will make a very large request to the Just-Eat API. <br />If you really want to do this, add a "verify_big_query" variable to your get request.';
+}
 ?>
