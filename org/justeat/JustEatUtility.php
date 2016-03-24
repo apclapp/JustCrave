@@ -49,15 +49,25 @@ class JustEatUtility {
 	}
 
 	public function getRestaurantsForPostcode($postcode) {
+		$postcode = urlencode($postcode);
+
 		$response = $this->WebConnectionLocal->getURL("https://public.je-apis.com/restaurants?q=$postcode");
 		$decoded_response = json_decode($response);
 
 		$result_restaurants = array();
 
 		foreach ($decoded_response->Restaurants as $restaurant) {
+
+			// Get the logo url
+			$restaurant_logo_url = "";
+			if (isset($restaurant->Logo[0])) {
+				$restaurant_logo_url = $restaurant->Logo[0]->StandardResolutionURL;
+			}
+
 			$result_restaurants[] = array(
 				'name' => trim($restaurant->Name),
 				'id' => $restaurant->Id,
+				'logo' => $restaurant_logo_url,
 			);
 		}
 

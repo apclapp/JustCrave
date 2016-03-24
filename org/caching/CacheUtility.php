@@ -29,10 +29,18 @@ class CacheUtility {
 
 		$restaurant_ids = array_column($restaurant_set, 'id');
 		$restaurant_names = array_column($restaurant_set, 'name');
+		$restaurant_logos = array_column($restaurant_set, 'logo');
+
 		$restaurant_pairs = array_combine($restaurant_ids, $restaurant_names);
+		$restaurant_logo_pairs = array_combine($restaurant_ids, $restaurant_logos);
 
 		// Get the sets of 'out of date', 'in date', 'not in cache' restaurants
 		$restaurant_updates = $this->getRestaurantUpdates($restaurant_ids);
+
+		// Exit the function if there are no restaurants found
+		if (empty($restaurant_updates)) {
+			return;
+		}
 
 		// Remove the out of date restaurants, categories, and items
 		$this->removeRestaurants($restaurant_updates['out_of_date']);
@@ -42,6 +50,14 @@ class CacheUtility {
 
 			// Add the restaurant info to the cache
 			$this->addRestaurantToCache($restaurant_id, $restaurant_pairs[$restaurant_id]);
+
+			// Save the restaurant's logo
+			if (!empty($restaurant_logo_pairs[$restaurant_id])) {
+				$base_logo_path = dirname(__FILE__) . '/../../images/logo';
+				$restaurant_logo_url = $restaurant_logo_pairs[$restaurant_id];
+				$local_logo_path = "$base_logo_path/$restaurant_id.gif";
+				file_put_contents($local_logo_path, file_get_contents($restaurant_logo_url));
+			}
 
 			// Get the categories for this restaurant as sets of 'menu_id' => array(<category_ids>)
 			$restaurant_menus = $this->JustEatUtility->getCategoriesForRestaurant($restaurant_id);
@@ -133,7 +149,7 @@ class CacheUtility {
 		return $return;
 	}
 
-	private function removeRestaurants(array $restaurant_ids) {
+	private function removeRestaurants($restaurant_ids) {
 		// This function will remove all data associated with certain restaurants from the database.
 		// It is useful to do this as the first half of an update for a new restaurant
 

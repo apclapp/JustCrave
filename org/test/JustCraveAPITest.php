@@ -67,6 +67,11 @@ class JustCraveApiTest {
 
 		$sample_search_result = $this->Database->query($sample_search_query);
 
+		// Add the path to the logo to each result
+		foreach ($sample_search_result as &$result) {
+			$result['itemLogo'] = 'images/logo/' . $result['restaurantId'] . '.gif';
+		}
+
 		// Dump the search results as raw jason
 		echo json_encode($sample_search_result, JSON_PRETTY_PRINT);
 	}
