@@ -13,7 +13,7 @@ var Resultspage = React.createClass({
         var that = this;
 
         if(!this.state.results) {
-            this._getResults(function(response) {
+            this._getResults(this.state.postcode, this.state.search, function(response) {
                 that.setState({
                     results: response
                 });
@@ -45,10 +45,10 @@ var Resultspage = React.createClass({
 
     },
 
-    _getResults: function(callback) {
+    _getResults: function(postcode, query, callback) {
 
         var ajax = new Ajax({
-            url: '/org/test/FakeApiEndpoint.php',
+            url: '/org/test/FakeApiEndpoint.php?postcode=' + postcode + '&query=' + query,
             method: 'GET'
         });
 
