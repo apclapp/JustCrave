@@ -69,6 +69,9 @@ class CacheUtility {
 				}
 			}
 		}
+
+		// Return the set of changes applied (attempted)
+		return $restaurant_updates;
 	}
 
 	private function getRestaurantUpdates(array $restaurant_ids) {

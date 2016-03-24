@@ -30,7 +30,9 @@ class UpdateCacheTest {
 	private function doUpdate() {
 		$postcode = isset($_REQUEST['postcode']) ? $_REQUEST['postcode'] : 'BA23QB';
 
-		$this->CacheUtility->updateCachedRestaurants($postcode);
+		$update_result = $this->CacheUtility->updateCachedRestaurants($postcode);
+
+		var_dump($update_result);
 	}
 
 }
