@@ -10,15 +10,11 @@ var Resultspage = React.createClass({
     },
 
     componentDidMount: function() {
-        var that = this;
+        this._getResults();
+    },
 
-        if(!this.state.results) {
-            this._getResults(this.props.postcode, this.props.search, function(response) {
-                that.setState({
-                    results: response
-                });
-            });
-        }
+    componentDidUpdate: function() {
+        this._getResults();
     },
 
     render: function() {
@@ -45,25 +41,30 @@ var Resultspage = React.createClass({
 
     },
 
-    _getResults: function(postcode, query, callback) {
+    _getResults: function() {
+
+        var that = this;
 
         var ajax = new Ajax({
-            url: '/org/test/JustCraveAPITest.php?postcode=' + postcode + '&query=' + query,
+            url: '/org/test/JustCraveAPITest.php?postcode=' + this.props.postcode + '&query=' + this.props.search,
+            // url: '/org/test/FakeApiEndpoint.php',
             method: 'GET'
         });
 
         ajax.on('success', function(event) {
             try {
                 var response = JSON.parse(event.target.response);
-                callback(response);
+                that.setState({
+                    results: response
+                });
             } catch(err) {
-                callback(new Error(event.target.response));
+                console.log('bad json convert');
             }
 
         });
 
         ajax.on('error', function(event) {
-            callback(new Error('Bad response'));
+            console.log('bad ajax');
         });
 
         ajax.send();
