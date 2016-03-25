@@ -53,7 +53,7 @@ var Resultspage = React.createClass({
         var that = this;
 
         var ajax = new Ajax({
-            url: '/org/test/FakeApiEndpoint.php?postcode=' + this.state.postcode + '&query=' + this.state.search,
+            url: '/org/test/JustCraveAPITest.php?postcode=' + this.state.postcode + '&query=' + this.state.search,
             // url: '/org/test/FakeApiEndpoint.php',
             method: 'GET'
         });
