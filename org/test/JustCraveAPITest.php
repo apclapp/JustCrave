@@ -78,40 +78,6 @@ class JustCraveApiTest {
 
 		$sample_search_query = "CALL `justcrave`.`search_food_items`('$search_text', '$restaurant_in_string')";
 
-		// var_dump($sample_search_query);
-		/*
-			"SELECT
-			    r.restaurantName,
-			    c.categoryName,
-			    i . *,
-			    MATCH (i.itemName) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE) * 2 + MATCH (i.itemSynonym) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE) + MATCH (c.categoryName) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE) as searchScore
-			FROM
-			    `justcrave`.`items` i
-			        INNER JOIN
-			    `justcrave`.`categories` c ON i.categoryId = c.categoryId
-			        INNER JOIN
-			    `justcrave`.`restaurants` r ON i.restaurantId = r.restaurantId
-			WHERE
-			    (MATCH (i.itemName) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE)
-			        OR MATCH (i.itemSynonym) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE)
-			        OR MATCH (c.categoryName) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE))
-			AND i.restaurantId IN ($restaurant_in_string)
-			ORDER BY searchScore DESC;";*/
-
-		//$sample_search = $this->Database->query("SELECT * FROM `items` WHERE itemName LIKE '%$search_text%'");
-		/* $sample_search_query =
-			"SELECT
-			    r.restaurantName, c.categoryName, i . *
-			FROM
-			    `justcrave`.`items` i
-			        INNER JOIN
-			    `justcrave`.`categories` c ON i.categoryId = c.categoryId
-			        INNER JOIN
-			    `justcrave`.`restaurants` r ON i.restaurantId = r.restaurantId
-			WHERE
-				MATCH(i.itemName) AGAINST('$search_text' IN NATURAL LANGUAGE MODE);"; */
-		// CONCAT_WS(' ', c.categoryName, i.itemName, i.itemSynonym)  LIKE '%$search_text%';";
-
 		$sample_search_result = $this->Database->query($sample_search_query);
 
 		// Add the path to the logo to each result
