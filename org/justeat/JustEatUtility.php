@@ -54,6 +54,11 @@ class JustEatUtility {
 		$response = $this->WebConnectionLocal->getURL("https://public.je-apis.com/restaurants?q=$postcode");
 		$decoded_response = json_decode($response);
 
+		if (empty($decoded_response)) {
+			// If we didn't get any results back, exit the function
+			return;
+		}
+
 		$result_restaurants = array();
 
 		foreach ($decoded_response->Restaurants as $restaurant) {
