@@ -29,7 +29,7 @@ class CacheUtility {
 
 		if (empty($restaurant_set)) {
 			// No restaurant set returned
-			echo "Error: CacheUtility couldn't get restaurants on line " . __LINE__;
+			echo "Error: CacheUtility couldn't get restaurants on line: " . __LINE__;
 			return;
 		}
 
@@ -45,7 +45,7 @@ class CacheUtility {
 
 		// Exit the function if there are no restaurants found
 		if (empty($restaurant_updates)) {
-			echo "Error: CacheUtility couldn't get restaurant updates on line " . __LINE__;
+			echo "Error: CacheUtility couldn't get restaurant updates on line: " . __LINE__;
 			return;
 		}
 
