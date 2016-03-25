@@ -49,7 +49,7 @@ var Homepage = React.createClass({
     },
 
     _onPostcodeChange: function(event) {
-        if(/^[a-z0-9]*$/i.test(event.target.value) && event.target.value.length < 8){
+        if(/^[a-z0-9 ]*$/i.test(event.target.value) && event.target.value.length < 8){
             this.setState({postcode: event.target.value.toUpperCase()}); 
         }
     },
