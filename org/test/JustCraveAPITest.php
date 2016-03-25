@@ -66,7 +66,7 @@ class JustCraveApiTest {
 		$search_text = $this->Database->escapeString($search_text);
 
 		// Generate the set of restaurants to search in
-		$restaurant_in_string = implode(', ', $restaurant_ids);
+		$restaurant_in_string = implode(',', $restaurant_ids);
 
 		if (empty($restaurant_ids)) {
 			// If we don't have any restaurants, then exit this function
@@ -76,7 +76,10 @@ class JustCraveApiTest {
 			return;
 		}
 
-		$sample_search_query =
+		$sample_search_query = "CALL `justcrave`.`search_food_items`('$search_text', '$restaurant_in_string')";
+
+		// var_dump($sample_search_query);
+		/*
 			"SELECT
 			    r.restaurantName,
 			    c.categoryName,
@@ -93,7 +96,7 @@ class JustCraveApiTest {
 			        OR MATCH (i.itemSynonym) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE)
 			        OR MATCH (c.categoryName) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE))
 			AND i.restaurantId IN ($restaurant_in_string)
-			ORDER BY searchScore DESC;";
+			ORDER BY searchScore DESC;";*/
 
 		//$sample_search = $this->Database->query("SELECT * FROM `items` WHERE itemName LIKE '%$search_text%'");
 		/* $sample_search_query =

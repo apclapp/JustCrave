@@ -60,7 +60,7 @@ class DatabaseConnectionMySQL implements DatabaseConnection {
 		// Record the query row count
 		$this->last_row_count = $this->DB->affected_rows;
 
-		if ($this->strStartsWith($query_string, 'SELECT')) {
+		if ($this->strStartsWith($query_string, 'SELECT') || $this->strStartsWith($query_string, 'CALL')) {
 			while ($row = $result_obj->fetch_assoc()) {
 				$return_rows[] = $row;
 			}

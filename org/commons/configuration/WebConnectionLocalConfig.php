@@ -30,7 +30,7 @@ class WebConnectionLocalConfig extends GenericConfiguration {
 		),
 		"CFG_USE_COOKIES" => array(
 			"Whether cURL requests should utilize cookies",
-			TRUE,
+			FALSE,
 		),
 		"CFG_BYPASS_VM" => array(
 			"Whether cURL requests should mask their referrer to bypass Virgin Media blocking",
