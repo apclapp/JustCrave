@@ -35,25 +35,68 @@ class JustCraveApiTest {
 	}
 
 	protected function run() {
-		$this->updateCache();
-		$this->getSearchResults();
+		$cache_update = $this->updateCache();
+
+		if (empty($cache_update)) {
+			// No restaurants found for the given postcode
+
+			echo "Error: JustCraveAPITest couldn't get cache update on line " . __LINE__;
+			var_dump($cache_update);
+			return;
+		}
+
+		$restaurant_ids = $this->flattenCacheResults($cache_update);
+
+		$this->getSearchResults($restaurant_ids);
 	}
 
 	private function updateCache() {
 		$postcode = isset($_REQUEST['postcode']) ? $_REQUEST['postcode'] : 'BA23QB';
 
-		$this->CacheUtility->updateCachedRestaurants($postcode);
+		$cache_update_result = $this->CacheUtility->updateCachedRestaurants($postcode);
+
+		return $cache_update_result;
 	}
 
-	private function getSearchResults() {
+	private function getSearchResults($restaurant_ids) {
 		$postcode = isset($_REQUEST['postcode']) ? $_REQUEST['postcode'] : 'BA23QB';
 		$search_text = isset($_REQUEST['query']) ? $_REQUEST['query'] : 'cola';
 
 		$postcode = $this->Database->escapeString($postcode);
 		$search_text = $this->Database->escapeString($search_text);
 
-		//$sample_search = $this->Database->query("SELECT * FROM `items` WHERE itemName LIKE '%$search_text%'");
+		// Generate the set of restaurants to search in
+		$restaurant_in_string = implode(', ', $restaurant_ids);
+
+		if (empty($restaurant_ids)) {
+			// If we don't have any restaurants, then exit this function
+
+			echo "Error: JustCraveAPITest couldn't get restaurant_ids on line " . __LINE__;
+			var_dump($restaurant_ids);
+			return;
+		}
+
 		$sample_search_query =
+			"SELECT
+			    r.restaurantName,
+			    c.categoryName,
+			    i . *,
+			    MATCH (i.itemName) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE) * 2 + MATCH (i.itemSynonym) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE) + MATCH (c.categoryName) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE) as searchScore
+			FROM
+			    `justcrave`.`items` i
+			        INNER JOIN
+			    `justcrave`.`categories` c ON i.categoryId = c.categoryId
+			        INNER JOIN
+			    `justcrave`.`restaurants` r ON i.restaurantId = r.restaurantId
+			WHERE
+			    (MATCH (i.itemName) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE)
+			        OR MATCH (i.itemSynonym) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE)
+			        OR MATCH (c.categoryName) AGAINST ('$search_text' IN NATURAL LANGUAGE MODE))
+			AND i.restaurantId IN ($restaurant_in_string)
+			ORDER BY searchScore DESC;";
+
+		//$sample_search = $this->Database->query("SELECT * FROM `items` WHERE itemName LIKE '%$search_text%'");
+		/* $sample_search_query =
 			"SELECT
 			    r.restaurantName, c.categoryName, i . *
 			FROM
@@ -63,7 +106,7 @@ class JustCraveApiTest {
 			        INNER JOIN
 			    `justcrave`.`restaurants` r ON i.restaurantId = r.restaurantId
 			WHERE
-				MATCH(i.itemName) AGAINST('$search_text' IN NATURAL LANGUAGE MODE);";
+				MATCH(i.itemName) AGAINST('$search_text' IN NATURAL LANGUAGE MODE);"; */
 		// CONCAT_WS(' ', c.categoryName, i.itemName, i.itemSynonym)  LIKE '%$search_text%';";
 
 		$sample_search_result = $this->Database->query($sample_search_query);
@@ -77,6 +120,20 @@ class JustCraveApiTest {
 		echo json_encode($sample_search_result, JSON_PRETTY_PRINT);
 	}
 
+	private function flattenCacheResults($cache_results) {
+		// This function turns a cache result into a flat array of restaurant id's
+
+		$result_array = array();
+
+		foreach ($cache_results as $result) {
+			foreach ($result as $restaurant_id) {
+				$result_array[$restaurant_id] = true;
+			}
+		}
+
+		// Return the set of restaurant id's
+		return array_keys($result_array);
+	}
 }
 
 $JustCraveApiTest = new JustCraveApiTest();

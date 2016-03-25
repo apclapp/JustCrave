@@ -51,11 +51,12 @@ class JustEatUtility {
 	public function getRestaurantsForPostcode($postcode) {
 		$postcode = urlencode($postcode);
 
-		$response = $this->WebConnectionLocal->getURL("https://public.je-apis.com/restaurants?q=$postcode");
+		$response = $this->WebConnectionLocal->getURL("http://public.je-apis.com/restaurants?q=$postcode");
 		$decoded_response = json_decode($response);
 
 		if (empty($decoded_response)) {
 			// If we didn't get any results back, exit the function
+			echo "Error: JustEatUtility couldn't decode response on line " . __LINE__;
 			return;
 		}
 

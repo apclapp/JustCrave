@@ -27,6 +27,12 @@ class CacheUtility {
 		// Get the restaurant set
 		$restaurant_set = $this->JustEatUtility->getRestaurantsForPostcode($postcode);
 
+		if (empty($restaurant_set)) {
+			// No restaurant set returned
+			echo "Error: CacheUtility couldn't get restaurants on line " . __LINE__;
+			return;
+		}
+
 		$restaurant_ids = array_column($restaurant_set, 'id');
 		$restaurant_names = array_column($restaurant_set, 'name');
 		$restaurant_logos = array_column($restaurant_set, 'logo');
@@ -39,6 +45,7 @@ class CacheUtility {
 
 		// Exit the function if there are no restaurants found
 		if (empty($restaurant_updates)) {
+			echo "Error: CacheUtility couldn't get restaurant updates on line " . __LINE__;
 			return;
 		}
 
