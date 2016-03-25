@@ -1,7 +1,7 @@
 var gulp = require('gulp');
 var bro = require('gulp-bro');
 var reactify = require('reactify');
-var uglifyify = require('uglifyify');
+var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
 var fs = require('fs');
 var mysql      = require('mysql');
@@ -24,8 +24,9 @@ var query = Promise.promisify(connection.query, {context: connection});
 gulp.task('build', function() {
     return gulp.src('./web/main.jsx')
         .pipe(bro({
-            transform: [reactify, uglifyify]
+            transform: [reactify]
         }))
+        .pipe(uglify())
         .pipe(rename("bundle.js"))
         .pipe(gulp.dest('./public'));
 });

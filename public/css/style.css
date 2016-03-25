@@ -15,3 +15,27 @@ html, body {
     max-width: 1000px;
     width: 95%;
 }
+
+
+.restaurant {
+    position: relative;
+}
+
+.restaurant .info {
+    height: 100px;
+    padding-left: 110px;
+}
+
+.restaurant .logo {
+    background: black;
+    background-size: contain;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.restaurant .items {
+    padding-left: 110px;
+}

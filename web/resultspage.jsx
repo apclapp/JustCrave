@@ -19,33 +19,24 @@ var Resultspage = React.createClass({
         if(this.state.postcode != newProps.postcode || this.state.search != newProps.search) {
             this.setState({
                 postcode: newProps.postcode,
-                search: newProps.search
+                search: newProps.search,
+                results: null
             });
             this._getResults();
         }
     },
 
     render: function() {
-        if(this.state.results) {
-            return (
-                <div className='resultspage'>
-                    <h1>Search Results</h1>
-                    <p>Postcode= {this.props.postcode}</p>
-                    <p>Search term= {this.props.search}</p>
-                    <ResultsList results={this.state.results}/>
-                </div>
-            );            
-        } else {
-            return (
-                <div className='resultspage'>
-                    <h1>Search Results</h1>
-                    <p>Postcode= {this.props.postcode}</p>
-                    <p>Search term= {this.props.search}</p>
-                    loading results...
-                </div>
-            );
-        }
+        var resultsList = this.state.results ? (<ResultsList results={this.state.results}/>) : "loading results...";
 
+        return (
+            <div className='resultspage'>
+                <h1>
+                    Results for "{this.state.search}" near postcode {this.state.postcode}
+                </h1>
+                {resultsList}
+            </div>
+        );
     },
 
     _getResults: function() {
@@ -61,11 +52,12 @@ var Resultspage = React.createClass({
         ajax.on('success', function(event) {
             try {
                 var response = JSON.parse(event.target.response);
+            } catch(err) {
+                console.log('bad json convert');
+            } finally {
                 that.setState({
                     results: response
                 });
-            } catch(err) {
-                console.log('bad json convert');
             }
 
         });
@@ -83,31 +75,25 @@ var Resultspage = React.createClass({
 var ResultsList = React.createClass({
 
     render: function() {
-        var results = this.props.results.map(function(result) {
+
+        var groupedResults = {};
+
+        for(var key in this.props.results) {
+            groupedResults[this.props.results[key].restaurantId] = groupedResults[this.props.results[key].restaurantId] || [];
+            groupedResults[this.props.results[key].restaurantId].push(this.props.results[key]);
+        }
+
+        var restaurants = Object.keys(groupedResults).map(function(key) {
             return (
-                <ResultsListItem result={result} />
+                <ResultsListItem items={groupedResults[key]}/>
             );
-        })
+
+        });
 
         return (
-            <table class="u-full-width">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>CategoryID</th>
-                        <th>RestaurantID</th>
-                        <th>Synonym</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Category</th>
-                        <th>Restaurant</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {results}
-                </tbody>
-            </table>
+            <div class='results'>
+                {restaurants}
+            </div>
         );
     }
 
@@ -116,18 +102,31 @@ var ResultsList = React.createClass({
 var ResultsListItem = React.createClass({
 
     render: function() {
+
+        var items = this.props.items.map(function(item) {
+            return (
+                <div className='item'>
+                    {item.itemName} - {item.categoryName} - {item.itemSynonym}
+                    <span className="pull-right">{item.itemPrice}</span>
+                </div>
+            );
+        });
+
+        var logostyle = {
+            backgroundImage: 'url(' + this.props.items[0].itemLogo + ')'
+        };
+
         return (
-            <tr>
-                <td>{this.props.result.itemId}</td>
-                <td>{this.props.result.itemName}</td>
-                <td>{this.props.result.categoryId}</td>
-                <td>{this.props.result.restaurantId}</td>
-                <td>{this.props.result.itemSynonym}</td>
-                <td>{this.props.result.itemDescription}</td>
-                <td>{this.props.result.itemPrice}</td>
-                <td>{this.props.result.categoryName}</td>
-                <td>{this.props.result.restaurantName}</td>
-            </tr>
+            <div className='restaurant'>
+                <div className='info'>
+                    <div className="logo" style={logostyle}></div>
+                        {this.props.items[0].restaurantName}<br/>open now
+                    </div>
+                <div className='items'>
+                    {items}
+                </div>
+
+            </div>
         );
     }
 });

@@ -22,7 +22,6 @@
     "react-mini-router": "^2.0.0",
     "react-router": "^2.0.1",
     "reactify": "^1.1.1",
-    "simple-ajax": "^2.4.0",
-    "uglifyify": "^3.0.1"
+    "simple-ajax": "^2.4.0"
   }
 }
