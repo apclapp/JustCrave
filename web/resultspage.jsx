@@ -5,7 +5,9 @@ var Resultspage = React.createClass({
 
     getInitialState: function() {
         return {
-            results: null
+            results: null,
+            search: this.props.search,
+            postcode: this.props.postcode
         };
     },
 
@@ -13,12 +15,17 @@ var Resultspage = React.createClass({
         this._getResults();
     },
 
-    componentDidUpdate: function() {
-        this._getResults();
+    componentWillReceiveProps: function(newProps) {
+        if(this.state.postcode != newProps.postcode || this.state.search != newProps.search) {
+            this.setState({
+                postcode: newProps.postcode,
+                search: newProps.search
+            });
+            this._getResults();
+        }
     },
 
     render: function() {
-            
         if(this.state.results) {
             return (
                 <div className='resultspage'>
@@ -46,7 +53,7 @@ var Resultspage = React.createClass({
         var that = this;
 
         var ajax = new Ajax({
-            url: '/org/test/JustCraveAPITest.php?postcode=' + this.props.postcode + '&query=' + this.props.search,
+            url: '/org/test/FakeApiEndpoint.php?postcode=' + this.state.postcode + '&query=' + this.state.search,
             // url: '/org/test/FakeApiEndpoint.php',
             method: 'GET'
         });
