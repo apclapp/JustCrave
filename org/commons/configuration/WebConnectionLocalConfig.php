@@ -34,7 +34,7 @@ class WebConnectionLocalConfig extends GenericConfiguration {
 		),
 		"CFG_BYPASS_VM" => array(
 			"Whether cURL requests should mask their referrer to bypass Virgin Media blocking",
-			TRUE,
+			FALSE,
 		),
 	);
 }

@@ -1,6 +1,6 @@
 <?php namespace org\test;
 /*
- * @classname JustCraveApiTest
+ * @classname JustCraveApiSuggestionTest
  * @author apclapp
  * @description This class allows for website search requests to be responded to
  */
@@ -8,11 +8,11 @@
 // An autoloader needs to be required
 require_once '../core/ClassLoader.php';
 
-use org\api\ItemQueryService;
+use org\api\ItemSuggestionService;
 
-class JustCraveApiTest {
+class JustCraveApiSuggestionTest {
 
-	private $ItemQueryService;
+	private $ItemSuggestionService;
 
 	public function __construct() {
 		$this->init();
@@ -20,14 +20,14 @@ class JustCraveApiTest {
 	}
 
 	protected function init() {
-		$this->ItemQueryService = new ItemQueryService();
+		$this->ItemSuggestionService = new ItemSuggestionService();
 	}
 
 	protected function run() {
-		$this->ItemQueryService->searchItems();
+		$this->ItemSuggestionService->getSuggestions();
 	}
 }
 
-$JustCraveApiTest = new JustCraveApiTest();
+$JustCraveApiSuggestionTest = new JustCraveApiSuggestionTest();
 ?>
 

@@ -73,7 +73,21 @@ class JustEatUtility {
 			$result_restaurants[] = array(
 				'name' => trim($restaurant->Name),
 				'id' => $restaurant->Id,
-				'logo' => $restaurant_logo_url,
+				'address' => $restaurant_logo_url,
+				'postcode' => $restaurant_logo_url,
+				'city' => $restaurant_logo_url,
+				'average_rating' => $restaurant_logo_url,
+				'url' => $restaurant_logo_url,
+				'is_open_now' => $restaurant_logo_url,
+				'unique_name' => $restaurant_logo_url,
+				'is_close_by' => $restaurant_logo_url,
+				'rating_display' => $restaurant_logo_url,
+				'is_halal' => $restaurant_logo_url,
+				'is_delivering' => $restaurant_logo_url,
+				'is_collecting' => $restaurant_logo_url,
+				'rating_stars' => $restaurant_logo_url,
+				'is_open_now' => $restaurant_logo_url,
+				'is_open_now' => $restaurant_logo_url,
 			);
 		}
 
