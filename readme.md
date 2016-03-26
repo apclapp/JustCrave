@@ -25,3 +25,13 @@ And you can use the debug mode with:
 ```sh
 $ gulp
 ```
+
+## Database Updating
+
+simple use 
+
+```sh
+$ gulp updatedb
+```
+
+to install all patches you are yet to install
