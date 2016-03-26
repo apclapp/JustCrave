@@ -29,7 +29,7 @@ class ItemSuggestionService {
 
 	public function getSuggestions() {
 		// Get the search query from the request
-		$search_query = isset($_REQUEST['search_query']) ? $_REQUEST['search_query'] : 'coca';
+		$search_query = isset($_REQUEST['query']) ? $_REQUEST['query'] : 'coca';
 
 		// Escape the search query for SQL
 		$search_query = $this->Database->escapeString($search_query);
