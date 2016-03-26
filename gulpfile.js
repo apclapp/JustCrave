@@ -8,13 +8,20 @@ var mysql      = require('mysql');
 var localconfig = require('./config.json');
 var util = require('util');
 var gulpUtil = require('gulp-util');
+var Promise = require('bluebird');
+var exec = Promise.promisify(require('child_process').exec);
 
-var connection = mysql.createConnection({
+var dbConfig = {
   host     : 'localhost',
   user     : 'root',
   password : 'root',
-  database : 'justcrave'
-});
+  database : 'justcrave',
+  multipleStatements: true
+};
+
+var connection = mysql.createConnection(dbConfig);
+var query = Promise.promisify(connection.query, {context: connection});
+
 
 gulp.task('build', function() {
     return gulp.src('./web/main.jsx')
@@ -93,5 +100,41 @@ gulp.task('db:incrementversion', ['db:connect', 'db:checkversion'], function(cal
         ));
 
         callback();
+    });
+});
+
+gulp.task('updatedb', function(callback) {
+    var patchnames = fs.readdirSync('./sql/patches');
+    var total = patchnames.length;
+
+    var promise = query('SELECT * FROM patches;').then(function(rows) {
+        patchnames = patchnames.filter(function(patchname) {
+            for(var i in rows) {
+                if(rows[i].patchname == patchname) return false;
+            }
+            return true;
+        });
+    });
+
+    promise.then(function() {
+        console.log(util.format('\n    %s/%s patches already installed.\n', total-patchnames.length, total));
+
+        for(var i in patchnames){
+            promise = promise.then(function(patchname) {
+                return function(){
+                    console.log(util.format('    Running patch %s...', patchname));
+                    return exec('mysql -uroot -proot justcrave < ./sql/patches/' + patchname)
+                        .then(query('INSERT INTO patches VALUES (\'' + patchname + '\');'));
+                }
+            }(patchnames[i]));
+        }
+
+        promise.finally(function() {
+            
+            console.log(util.format('    Complete.\n'));
+
+            connection.end();
+            callback();
+        });
     });
 });

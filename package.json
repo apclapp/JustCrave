@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.3.4",
     "browserify": "^13.0.0",
     "classnames": "^2.2.3",
     "gulp": "^3.9.1",
