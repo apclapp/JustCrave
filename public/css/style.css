@@ -20,11 +20,11 @@ html, body {
 .restaurant {
     position: relative;
     margin: 60px 0;
-    padding-left: 100px;
 }
 
 .restaurant .info {
-    height: 80px; 
+    min-height: 80px;
+    padding-left: 100px;
 }
 
 .restaurant .logo {
@@ -38,7 +38,7 @@ html, body {
 }
 
 .restaurant .items {
-    padding-left: 30px;
+    padding-left: 130px;
 }
 
 
@@ -52,10 +52,19 @@ html, body {
     padding: 4px 0;
     font-size: 14pt;
     position: relative;
-    padding-right: 50px;
+    padding-right: 80px;
 }
 
 .restaurant .item .price {
     position: absolute;
     right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 550px) {
+    
+    .restaurant .items {
+        padding-left: 10px;
+    }
 }
