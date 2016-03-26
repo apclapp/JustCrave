@@ -15,14 +15,16 @@ var Resultspage = React.createClass({
         this._getResults();
     },
 
-    componentWillReceiveProps: function(newProps) {
-        if(this.state.postcode != newProps.postcode || this.state.search != newProps.search) {
+    componentDidUpdate: function() {
+        if(this.state.postcode != this.props.postcode || this.state.search != this.props.search) {
+            var that = this;
             this.setState({
-                postcode: newProps.postcode,
-                search: newProps.search,
+                postcode: this.props.postcode,
+                search: this.props.search,
                 results: null
+            }, function() {
+                that._getResults();
             });
-            this._getResults();
         }
     },
 
@@ -103,11 +105,13 @@ var ResultsListItem = React.createClass({
 
     render: function() {
 
+        var poundSign = '\u00a3';
+
         var items = this.props.items.map(function(item) {
             return (
                 <div className='item'>
-                    {item.itemName} - {item.categoryName} - {item.itemSynonym}
-                    <span className="pull-right">{item.itemPrice}</span>
+                    {item.categoryName} - {item.itemSynonym} {item.itemName}
+                    <span className="price">{poundSign}{parseFloat(item.itemPrice).toFixed(2)}</span>
                 </div>
             );
         });
@@ -118,10 +122,11 @@ var ResultsListItem = React.createClass({
 
         return (
             <div className='restaurant'>
+                <div className="logo" style={logostyle}></div>
                 <div className='info'>
-                    <div className="logo" style={logostyle}></div>
-                        {this.props.items[0].restaurantName}<br/>open now
-                    </div>
+                    <h4 className='restaurantName'>{this.props.items[0].restaurantName}</h4>
+                    <small>OPEN NOW - DELIVERY & COLLECTION</small>
+                </div>
                 <div className='items'>
                     {items}
                 </div>
