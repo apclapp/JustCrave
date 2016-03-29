@@ -51,18 +51,17 @@ var Resultspage = React.createClass({
                 break;
 
             case mode.SUCCESS:
-                message = 'Found ' + this.state.results.length + ' results.';
+                message = 'Found ' + this.state.results.length + ' results for "' + this.state.search + '" near ' + this.state.postcode + '.' ;
                 resultsList = (<ResultsList results={this.state.results}/>);
                 break
         }
 
         return (
-            <div className='resultspage'>
-                <h1>
-                    Results for "{this.state.search}" near postcode {this.state.postcode}
-                </h1>
-                {message}
-                {resultsList}
+            <div className='resultspage'>                
+                <div className='container'>
+                    {message}
+                    {resultsList}
+                </div>
             </div>
         );
     },
@@ -82,6 +81,10 @@ var Resultspage = React.createClass({
             }
         });
     },   
+
+    _search: function() {
+
+    }
 
 
 });

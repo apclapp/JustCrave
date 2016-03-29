@@ -2,8 +2,8 @@ var React = require('react');
 var RouterMixin = require('react-mini-router').RouterMixin;
 var navigate = require('react-mini-router').navigate;
 
-var Homepage = require('./homepage.jsx');
 var Resultspage = require('./resultspage.jsx');
+var SearchForm = require('./searchform.jsx');
 
 
 var App = React.createClass({
@@ -12,7 +12,7 @@ var App = React.createClass({
 
     routes: {
         '/': 'home',
-        '/q/:postcode/:search': 'results'
+        '/q/:postcode/:query': 'results'
     },
 
     render: function() {
@@ -20,19 +20,37 @@ var App = React.createClass({
     },
 
     home: function() {
-        return <Homepage onSubmit={this._navigateToResults}/>;
+        return this._renderPage('', '', null);
     },
 
-    results: function(postcode, search) {
-        return <Resultspage postcode={postcode} search={search || ''}/>;
+    results: function(postcode, query) {
+        return this._renderPage(postcode, query, (
+            <Resultspage postcode={postcode} search={query}/>
+        ));
     },
 
     notFound: function(route) {
         return (<p>"NOT FOUND"</p>);  
     },
 
-    _navigateToResults: function(postcode, search) {
-        navigate('/q/' + postcode + '/' + search);
+    _renderPage: function(postcode, query, children) {
+
+        return (
+            <div className='page'>
+                <div className='banner'>
+                    <div className='container'>
+                    <div className='title'>Just Crave</div>
+                        <SearchForm onSubmit={this._navigateToResults} postcode={postcode} query={query} />
+                    </div>
+                </div>
+                {children}
+            </div>
+        );
+
+    },
+
+    _navigateToResults: function(postcode, query) {
+        navigate('/q/' + postcode + '/' + query);
     }
 
 
