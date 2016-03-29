@@ -1,11 +1,14 @@
 var React = require('react');
+var api = require('./api.js');
+var SearchBox = require('./searchbox.jsx');
 
 var Homepage = React.createClass({
 
     getInitialState: function() {
         return {
             postcode: '',
-            search: ''  
+            search: '',
+            queryPredictions: []
         };
     },
 
@@ -29,15 +32,18 @@ var Homepage = React.createClass({
 
                         <div className="six columns">
                             <label>Search</label>
-                            <input
+                            <SearchBox
                                 className="u-full-width"
                                 type='text'
                                 placeholder='search'
                                 value={this.state.search}
                                 onChange={this._onSearchChange}
+                                suggestions={this.state.queryPredictions}
+                                onSuggestionsUpdateRequested={this._onSuggestionsUpdateRequested}
                             />
                         </div>
                     </div>
+
 
                     <div className="row">
                         <button className="button-primary" type="submit">Search</button>
@@ -54,8 +60,27 @@ var Homepage = React.createClass({
         }
     },
 
-    _onSearchChange: function(event) {
-        this.setState({search: event.target.value});
+    _onSearchChange: function(event, data) {
+        console.log('onchange');
+        this.setState({search: data.newValue});   
+    },
+
+    _onSuggestionsUpdateRequested: function(data) {
+        console.log('suggestions update needed');
+
+        this.setState({
+            queryPredictions: []
+        });
+
+        var that = this;
+        api.autofillquery(data.value, function(err, response) {
+            console.log(response);
+
+            that.setState({
+                queryPredictions: response
+            });
+
+        });
     },
 
     _onSubmit: function(event) {

@@ -1,5 +1,5 @@
 var React = require('react');
-var Ajax = require('simple-ajax');
+var api = require('./api.js');
 
 var Resultspage = React.createClass({
 
@@ -42,34 +42,15 @@ var Resultspage = React.createClass({
     },
 
     _getResults: function() {
-
         var that = this;
-
-        var ajax = new Ajax({
-            url: '/org/test/JustCraveAPITest.php?postcode=' + this.state.postcode + '&query=' + this.state.search,
-            // url: '/org/test/FakeApiEndpoint.php',
-            method: 'GET'
-        });
-
-        ajax.on('success', function(event) {
-            try {
-                var response = JSON.parse(event.target.response);
-            } catch(err) {
-                console.log('bad json convert');
-            } finally {
+        api.search(this.state.postcode, this.state.search, function(err, response) {
+            if(!err) {
                 that.setState({
                     results: response
                 });
             }
-
         });
-
-        ajax.on('error', function(event) {
-            console.log('bad ajax');
-        });
-
-        ajax.send();
-    },
+    },   
 
 
 });
