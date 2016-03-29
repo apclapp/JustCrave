@@ -24,8 +24,14 @@ class JustCraveRestaurantDetailTest {
 	}
 
 	protected function run() {
-		$restaurants = $this->JustEatUtility->getRestaurantsForPostcode('BA2 3QJ');
+		$postcode = isset($_REQUEST['postcode']) ? $_REQUEST['postcode'] : 'BA23QB';
+		$this->updateRestaurantDetails($postcode);
+	}
+
+	private function updateRestaurantDetails($postcode) {
+		$restaurants = $this->JustEatUtility->getRestaurantsForPostcode($postcode);
 		var_dump($restaurants);
+
 	}
 }
 

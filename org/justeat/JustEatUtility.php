@@ -23,6 +23,7 @@ class JustEatUtility {
 		$this->WebConnectionLocal->setHeaderProperty('Accept-Language', 'en-GB');
 		$this->WebConnectionLocal->setHeaderProperty('Authorization', 'Basic VGVjaFRlc3RBUEk6dXNlcjI=');
 		$this->WebConnectionLocal->setHeaderProperty('Host', 'public.je-apis.com');
+		$this->WebConnectionLocal->setHeaderProperty('Content-Type', 'application/json');
 	}
 
 	public function getAllItemsForPostCode($postcode) {
@@ -70,7 +71,7 @@ class JustEatUtility {
 				$restaurant_logo_url = $restaurant->Logo[0]->StandardResolutionURL;
 			}
 
-			$result_restaurants[] = array(
+			$result_restaurants[$restaurant->Id] = array(
 				'name' => trim($restaurant->Name),
 				'id' => $restaurant->Id,
 				'logo' => $restaurant_logo_url,

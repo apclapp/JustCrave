@@ -33,12 +33,8 @@ class CacheUtility {
 			return;
 		}
 
-		$restaurant_ids = array_column($restaurant_set, 'id');
-		$restaurant_names = array_column($restaurant_set, 'name');
-		$restaurant_logos = array_column($restaurant_set, 'logo');
-
-		$restaurant_pairs = array_combine($restaurant_ids, $restaurant_names);
-		$restaurant_logo_pairs = array_combine($restaurant_ids, $restaurant_logos);
+		// Get the list of restaurant id's found
+		$restaurant_ids = array_keys($restaurant_set);
 
 		// Get the sets of 'out of date', 'in date', 'not in cache' restaurants
 		$restaurant_updates = $this->getRestaurantUpdates($restaurant_ids);
@@ -56,12 +52,21 @@ class CacheUtility {
 		foreach ($restaurant_updates['add_to_cache'] as $restaurant_id) {
 
 			// Add the restaurant info to the cache
-			$this->addRestaurantToCache($restaurant_id, $restaurant_pairs[$restaurant_id]);
+			$this->addRestaurantToCache(
+				$restaurant_id,
+				$restaurant_set[$restaurant_id]['name'],
+				$restaurant_set[$restaurant_id]['address'],
+				$restaurant_set[$restaurant_id]['postcode'],
+				$restaurant_set[$restaurant_id]['city'],
+				$restaurant_set[$restaurant_id]['url'],
+				$restaurant_set[$restaurant_id]['is_halal'],
+				$restaurant_set[$restaurant_id]['rating_stars']
+			);
 
 			// Save the restaurant's logo
-			if (!empty($restaurant_logo_pairs[$restaurant_id])) {
+			if (!empty($restaurant_set[$restaurant_id]['logo'])) {
 				$base_logo_path = dirname(__FILE__) . '/../../images/logo';
-				$restaurant_logo_url = $restaurant_logo_pairs[$restaurant_id];
+				$restaurant_logo_url = $restaurant_set[$restaurant_id]['logo'];
 				$local_logo_path = "$base_logo_path/$restaurant_id.gif";
 				file_put_contents($local_logo_path, file_get_contents($restaurant_logo_url));
 			}
@@ -198,15 +203,29 @@ class CacheUtility {
 		return ($restaurants_delete_result && $categories_delete_result && $items_delete_result);
 	}
 
-	private function addRestaurantToCache($restaurant_id, $restaurant_name) {
+	private function addRestaurantToCache($restaurant_id, $name, $address, $postcode, $city, $url, $is_halal, $rating_stars) {
 
 		$add_restaurant_query =
 		"INSERT INTO `justcrave`.`restaurants`
 				(`restaurantId`,
-				`restaurantName`)
+				`restaurantName`,
+				`address`,
+				`postcode`,
+				`city`,
+				`url`,
+				`is_halal`,
+				`rating_stars`
+				)
 			VALUES
 				($restaurant_id,
-				'" . $this->Database->escapeString($restaurant_name) . "');";
+				'" . $this->Database->escapeString($name) . "',
+				'" . $this->Database->escapeString($address) . "',
+				'" . $this->Database->escapeString($postcode) . "',
+				'" . $this->Database->escapeString($city) . "',
+				'" . $this->Database->escapeString($url) . "',
+				'" . ($is_halal ? '1' : '0') . "',
+				'" . $this->Database->escapeString($rating_stars) . "'
+				);";
 
 		// Execute the query to add the restaurant
 		$add_restaurant_result = $this->Database->query($add_restaurant_query);
