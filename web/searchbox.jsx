@@ -24,8 +24,8 @@ var SearchBox = React.createClass({
                         placeholder: this.props.placeholder || 'Search',
                         value: this.props.value,
                         onChange: this.props.onChange,
-                        className: this.props.className
                 }}
+                className= {this.props.className}
             />
         );
     }

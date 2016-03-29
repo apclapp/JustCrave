@@ -1,99 +1,133 @@
 @import url(https://fonts.googleapis.com/css?family=Raleway:400,700,300);
-
 * {
-    box-sizing: border-box;
-    font-family: "Raleway",sans-serif;
-}
+  box-sizing: border-box;
+  font-family: "Raleway",sans-serif; }
 
 html, body {
-    height: 100%;
-}
+  height: 100%; }
 
-.homepage, .resultspage {
-    margin:  auto;
-    padding-top: 100px;
-    max-width: 800px;
-    width: 95%;
-}
+.title {
+  color: white;
+  text-align: center;
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 20px; }
 
+.banner {
+  background: #cf4646; }
+
+.banner:last-child {
+  height: 100%; }
+
+.container {
+  margin: auto;
+  padding-top: 60px;
+  max-width: 800px;
+  width: 95%; }
 
 .restaurant {
-    position: relative;
-    margin: 60px 0;
-}
+  position: relative;
+  margin: 60px 0; }
 
 .restaurant .info {
-    min-height: 80px;
-    padding-left: 100px;
-}
+  min-height: 80px;
+  padding-left: 100px; }
 
 .restaurant .logo {
-    background: black;
-    background-size: contain;
-    width: 80px;
-    height: 80px;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
+  background: black;
+  background-size: contain;
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  top: 0;
+  left: 0; }
 
 .restaurant .items {
-    padding-left: 130px;
-}
-
+  padding-left: 130px; }
 
 .restaurantName {
-    /*text-transform: uppercase;*/
-    margin-bottom: 4px;
-}
+  /*text-transform: uppercase;*/
+  margin-bottom: 4px; }
 
 .restaurant .item {
-    border-bottom: 1px solid lightgray;
-    padding: 4px 0;
-    font-size: 14pt;
-    position: relative;
-    padding-right: 80px;
-}
+  border-bottom: 1px solid lightgray;
+  padding: 4px 0;
+  font-size: 14pt;
+  position: relative;
+  padding-right: 80px; }
 
 .restaurant .item .price {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-}
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%); }
 
 @media (max-width: 550px) {
-    
-    .restaurant .items {
-        padding-left: 10px;
-    }
-}
+  .restaurant .items {
+    padding-left: 10px; } }
 
+/*searchform*/
+.searchform {
+  width: 100%; }
 
+.searchform .postcode, .searchform .query, .searchform .submit-button {
+  display: inline-block;
+  height: 60px; }
 
+.searchform input {
+  font-size: 20px; }
+
+.searchform button {
+  color: white;
+  border-color: white;
+  background: #e44d4d; }
+  .searchform button:hover, .searchform button:focus {
+    color: white;
+    border-color: white;
+    background: #f85454; }
+
+.searchform input, .searchform button {
+  height: 60px;
+  width: 100%;
+  vertical-align: top; }
+
+.searchform .postcode {
+  width: 195px;
+  padding-right: 5px; }
+
+.searchform .query {
+  width: calc(100% - 195px - 160px);
+  padding-right: 5px;
+  padding-left: 5px; }
+
+.searchform .submit-button {
+  width: 160px;
+  padding-left: 5px; }
+
+@media (max-width: 550px) {
+  .searchform .postcode, .searchform .query, .searchform .submit-button {
+    width: 100%;
+    padding: 0;
+    margin-bottom: 10px; } }
 
 /*autosuggest*/
-
 .react-autosuggest__container {
-  position: relative;
-}
+  position: relative; }
 
 .react-autosuggest__input {
-  width: 100%;
-}
+  width: 100%; }
 
 .react-autosuggest__input:focus {
-  outline: none;
-}
+  outline: none; }
 
 .react-autosuggest__container--open .react-autosuggest__input {
   border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
+  border-bottom-right-radius: 0; }
 
 .react-autosuggest__suggestions-container {
   position: absolute;
-  top: 37px;
+  top: 60px;
   width: 100%;
   margin: 0;
   padding: 0;
@@ -104,14 +138,14 @@ html, body {
   font-size: 16px;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
-  z-index: 2;
-}
+  z-index: 2; }
 
 .react-autosuggest__suggestion {
   cursor: pointer;
-  padding: 10px 20px;
-}
+  padding: 10px;
+  /*outline: 1px solid orange;*/
+  margin: 0;
+  font-size: 20px; }
 
 .react-autosuggest__suggestion--focused {
-  background-color: #ddd;
-}
+  background-color: #ddd; }

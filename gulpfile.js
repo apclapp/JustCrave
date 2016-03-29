@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var sass = require('gulp-sass');
 var bro = require('gulp-bro');
 var reactify = require('reactify');
 var uglify = require('gulp-uglify');
@@ -31,6 +32,12 @@ gulp.task('build', function() {
         .pipe(gulp.dest('./public'));
 });
 
+gulp.task('sass', function () {
+  return gulp.src('./scss/**/*.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest('./public/css'));
+});
+
 gulp.task('debugbuild', function() {
     return gulp.src('./web/main.jsx')
         .pipe(bro({
@@ -40,8 +47,9 @@ gulp.task('debugbuild', function() {
         .pipe(gulp.dest('./public'));
 });
 
-gulp.task('default', ['debugbuild'], function() {
+gulp.task('default', ['debugbuild', 'sass'], function() {
     gulp.watch('web/**/*', ['debugbuild']);
+    gulp.watch('scss/**/*.scss', ['sass']);
 });
 
 
