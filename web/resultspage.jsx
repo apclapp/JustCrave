@@ -1,10 +1,15 @@
 var React = require('react');
 var api = require('./api.js');
 
+var mode = {
+    SUCCESS:1, FAIL:2, PENDING:3
+}
+
 var Resultspage = React.createClass({
 
     getInitialState: function() {
         return {
+            mode: mode.PENDING,
             results: null,
             search: this.props.search,
             postcode: this.props.postcode
@@ -21,7 +26,8 @@ var Resultspage = React.createClass({
             this.setState({
                 postcode: this.props.postcode,
                 search: this.props.search,
-                results: null
+                results: null,
+                mode: mode.PENDING
             }, function() {
                 that._getResults();
             });
@@ -29,13 +35,33 @@ var Resultspage = React.createClass({
     },
 
     render: function() {
-        var resultsList = this.state.results ? (<ResultsList results={this.state.results}/>) : "loading results...";
+        var message;
+        var resultsList;
+
+        switch(this.state.mode) {
+            
+            case mode.PENDING:
+                message = 'Loading results...';
+                resultsList = null;
+                break;
+
+            case mode.FAIL:
+                message = ':( Sorry we couldn\'t load the results';
+                resultsList = null;
+                break;
+
+            case mode.SUCCESS:
+                message = 'Found ' + this.state.results.length + ' results.';
+                resultsList = (<ResultsList results={this.state.results}/>);
+                break
+        }
 
         return (
             <div className='resultspage'>
                 <h1>
                     Results for "{this.state.search}" near postcode {this.state.postcode}
                 </h1>
+                {message}
                 {resultsList}
             </div>
         );
@@ -46,8 +72,13 @@ var Resultspage = React.createClass({
         api.search(this.state.postcode, this.state.search, function(err, response) {
             if(!err) {
                 that.setState({
-                    results: response
+                    results: response,
+                    mode: mode.SUCCESS
                 });
+            } else {
+                that.setState({
+                    mode: mode.FAIL
+                })
             }
         });
     },   

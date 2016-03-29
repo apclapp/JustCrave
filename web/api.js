@@ -8,7 +8,8 @@ module.exports = {
         var response;
         var ajax = new Ajax({
             url: '/org/test/JustCraveAPITest.php?postcode=' + postcode + '&query=' + query,
-            method: 'GET'
+            method: 'GET',
+            timeout: 15 * 60 * 1000 // 15 minutes
         });
 
         ajax.on('success', function(event) {
