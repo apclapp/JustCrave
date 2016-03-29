@@ -24,15 +24,11 @@ var App = React.createClass({
     },
 
     results: function(postcode, search) {
-        return <Resultspage postcode={postcode} search={search}/>;
+        return <Resultspage postcode={postcode} search={search || ''}/>;
     },
 
     notFound: function(route) {
-        return (
-            <div>
-                {route} could not be found. Click <a href='/'>here</a> to go to the homepage.
-            </div>
-        );
+        return (<p>"NOT FOUND"</p>);  
     },
 
     _navigateToResults: function(postcode, search) {

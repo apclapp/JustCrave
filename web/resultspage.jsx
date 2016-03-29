@@ -87,13 +87,13 @@ var ResultsList = React.createClass({
 
         var restaurants = Object.keys(groupedResults).map(function(key) {
             return (
-                <ResultsListItem items={groupedResults[key]}/>
+                <ResultsListItem key={key} items={groupedResults[key]}/>
             );
 
         });
 
         return (
-            <div class='results'>
+            <div className='results'>
                 {restaurants}
             </div>
         );
@@ -109,7 +109,7 @@ var ResultsListItem = React.createClass({
 
         var items = this.props.items.map(function(item) {
             return (
-                <div className='item'>
+                <div key={item.itemId} className='item'>
                     {item.categoryName} - {item.itemSynonym} {item.itemName}
                     <span className="price">{poundSign}{parseFloat(item.itemPrice).toFixed(2)}</span>
                 </div>
