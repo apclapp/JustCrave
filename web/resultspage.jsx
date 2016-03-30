@@ -71,7 +71,7 @@ var Resultspage = React.createClass({
         api.search(this.state.postcode, this.state.search, function(err, response) {
             if(!err) {
                 that.setState({
-                    results: response,
+                    results: response.search_results,
                     mode: mode.SUCCESS
                 });
             } else {

@@ -81,7 +81,8 @@ html, body {
 .searchform button {
   color: white;
   border-color: white;
-  background: #e44d4d; }
+  background: #e44d4d;
+  transition: all .4s; }
   .searchform button:hover, .searchform button:focus {
     color: white;
     border-color: white;

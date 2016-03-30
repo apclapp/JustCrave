@@ -109,6 +109,7 @@ html, body {
     color: white;
     border-color: white;
     background: $red * 1.1;
+    transition: all .4s;
 
     &:hover, &:focus {
         color: white;
