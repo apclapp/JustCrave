@@ -65,19 +65,95 @@ class ItemQueryService {
 
 		// Escape the search query
 		$search_query = $this->Database->escapeString($search_query);
-		$sample_search_query = "CALL `justcrave`.`search_food_items`('$search_query', '$restaurant_in_string')";
+		$sample_search_query = "CALL `justcrave`.`search_food_items_filters`('$search_query', '$restaurant_in_string')";
 
 		// Execute the query
 		$sample_search_result = $this->Database->query($sample_search_query);
 
+		// Get the common synonyms and categories
+		$common_syn_cat = $this->generateCommonSynAndCat($sample_search_result);
+
+		// Organize the result structure
+		$result = array(
+			'common_synonyms' => $common_syn_cat['synonyms'],
+			'common_categories' => $common_syn_cat['categories'],
+			'search_results' => $sample_search_result,
+		);
+
 		// Return array of search results
-		return $sample_search_result;
+		// return $sample_search_result;
+		return $result;
 	}
 
 	private function updateCache($postcode) {
 		$cache_update_result = $this->CacheUtility->updateCachedRestaurants($postcode);
 
 		return $cache_update_result;
+	}
+
+	private function generateCommonSynAndCat($search_result) {
+		// This function generates a list of filters from the common synonyms in the search results
+
+		$result = array('synonyms' => array(), 'categories' => array());
+
+		$common_synonyms = array();
+		$common_categories = array();
+
+		if (empty($search_result)) {
+			// If the search result it empty, exit this function.
+			return $common_synonyms;
+		}
+
+		foreach ($search_result as $item) {
+
+			// If this item has a common synonym
+			if ($item['isCommonSyn'] == 1) {
+				// Add the synonym id to the set of seen synonyms
+				if (!isset($common_synonyms[$item['friendlySynonymId']])) {
+					$common_synonyms[$item['friendlySynonymId']]['id'] = $item['friendlySynonymId'];
+					$common_synonyms[$item['friendlySynonymId']]['name'] = $item['friendlySynonym'];
+					$common_synonyms[$item['friendlySynonymId']]['count'] = 0;
+				}
+
+				// Add to the seen count for this synonym
+				$common_synonyms[$item['friendlySynonymId']]['count']++;
+			}
+
+			// If this item has a common category
+			if ($item['isCommonCat'] == 1) {
+				// Add the synonym id to the set of seen synonyms
+				if (!isset($common_categories[$item['friendlyCategoryId']])) {
+					$common_categories[$item['friendlyCategoryId']]['id'] = $item['friendlyCategoryId'];
+					$common_categories[$item['friendlyCategoryId']]['name'] = $item['categoryName'];
+					$common_categories[$item['friendlyCategoryId']]['count'] = 0;
+				}
+
+				// Add to the seen count for this synonym
+				$common_categories[$item['friendlyCategoryId']]['count']++;
+			}
+		}
+
+		// Sort the synonym array by most common synonym
+		usort($common_synonyms, array('org\api\ItemQueryService', 'sortByOccurrenceCountDesc'));
+
+		// Sort the category array by most common category
+		usort($common_categories, array('org\api\ItemQueryService', 'sortByOccurrenceCountDesc'));
+
+		// Re-index the synonym array from zero
+		$common_synonyms = array_values($common_synonyms);
+
+		// Re-index the category array from zero
+		$common_categories = array_values($common_categories);
+
+		$result['synonyms'] = $common_synonyms;
+		$result['categories'] = $common_categories;
+
+		// Return the set of common synonyms
+		return $result;
+	}
+
+	private static function sortByOccurrenceCountDesc($a, $b) {
+		return $b['count'] - $a['count'];
 	}
 
 	private function flattenCacheResults($cache_results) {
