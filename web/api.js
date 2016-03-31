@@ -7,7 +7,7 @@ module.exports = {
     search: function(postcode, query, callback) {
         var response;
         var ajax = new Ajax({
-            url: '/org/test/JustCraveAPITest.php?postcode=' + postcode + '&query=' + query,
+            url: '/org/test/JustCraveAPITest.php?postcode=' + encodeURIComponent(postcode) + '&query=' + encodeURIComponent(query),
             method: 'GET',
             timeout: 15 * 60 * 1000 // 15 minutes
         });
@@ -38,7 +38,7 @@ module.exports = {
 
         var response;
         var ajax = new Ajax({
-            url: '/org/test/JustCraveApiSuggestionTest.php?query=' + query,
+            url: '/org/test/JustCraveApiSuggestionTest.php?query=' + encodeURIComponent(query),
             method: 'GET'
         });
 
