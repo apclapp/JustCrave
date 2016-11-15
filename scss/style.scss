@@ -66,19 +66,88 @@ html, body {
     margin-bottom: 4px;
 }
 
-.restaurant .item {
-    border-bottom: 1px solid lightgray;
-    padding: 4px 0;
-    font-size: 14pt;
-    position: relative;
-    padding-right: 80px;
+.restaurant .category {    
+    margin-bottom: 20px;           
+
+    .category-name {
+        text-transform: uppercase;
+        font-size: 10pt;
+        letter-spacing: .5px;
+        font-weight: bold;
+        vertical-align: top;
+        margin-top: 10px;
+        /*border-bottom: 1px solid #dfdfdf;*/
+    }
+
+    /*.category-items {
+        padding-left: 40px;
+    }*/
 }
 
-.restaurant .item .price {
+.restaurant .group {
+    /*background: #f1f1f1;    */
+    /*border: 1px solid #dfdfdf;*/
+    /*border-radius: 4px;*/
+    padding: 5px 0 0;
+        /*border-bottom: 1px solid #dfdfdf;
+        border-left: 1px solid #dfdfdf;
+        overflow: hidden;
+        border-bottom-left-radius: 4px;*/
+    
+
+    margin: 10px 0 20px;
+
+    .group-name {
+        /*padding: 2px 0;*/
+        line-height: 18pt;
+        font-size: 11pt;
+        /*padding: 0 10px;*/
+        margin-bottom: 5px;
+        position: relative;
+        /*color: white;*/
+        /*border-bottom: 1px solid lightgray;        */
+    }
+
+    .group-items {
+        margin-left: 20px;
+        /*border-bottom: 1px solid #dfdfdf;
+        border-left: 1px solid #dfdfdf;*/
+        overflow: hidden;
+        border-bottom-left-radius: 4px;
+    }
+}
+
+.restaurant .item {
+    /*border-bottom: 1px solid lightgray;*/
+    /*border-left: 1px solid lightgray;*/
+    /*border-bottom-left-radius: 4px;*/
+    padding-left: 24px;
+    padding-left: 4px;
+    /*padding: 2px 0;*/
+    font-size: 11pt;
+    line-height: 18pt;
+    position: relative;
+    padding-right: 80px;
+
+    /*border-top: 1px solid #dfdfdf;*/
+
+    /*background: rgb(245, 245, 245);*/
+    
+
+    &:nth-child(2n-1) {
+        /*background: rgb(235, 235, 235);*/
+        /*background: rgb(245, 245, 245);        */
+    }
+}
+
+.restaurant .price {
     position: absolute;
     right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    width: 100%;
+    text-align: right;
+    border-bottom: 1px dotted #dfdfdf;
+    bottom: 0;//50%;
+    /*transform: translateY(-50%);*/
 }
 
 @media (max-width: 550px) {
@@ -89,6 +158,27 @@ html, body {
 }
 
 
+/*filters*/
+
+.filters {
+    background: rgb(240, 240, 240);
+    border: 1px solid #dfdfdf;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 20px;
+    cursor: pointer;
+
+    input {
+        margin: 0;
+    }
+}
+
+.filter {
+    display: inline-block;
+    width: 33%;
+    padding: 2px 4px;
+    line-height: 100%;
+}
 
 /*searchform*/
 
