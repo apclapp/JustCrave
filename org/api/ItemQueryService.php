@@ -101,7 +101,7 @@ class ItemQueryService {
 
 		if (empty($search_result)) {
 			// If the search result it empty, exit this function.
-			return $common_synonyms;
+			return $result;
 		}
 
 		foreach ($search_result as $item) {

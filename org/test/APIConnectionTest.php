@@ -33,7 +33,7 @@ class APIConnectionTest {
 	}
 
 	private function doAPICall() {
-		$postcode = isset($_REQUEST['postcode']) ? $_REQUEST['postcode'] : 'BA23QB';
+		$postcode = isset($_REQUEST['postcode']) ? $_REQUEST['postcode'] : 'NP253AU';
 		$item_result = $this->JustEatUtility->getAllItemsForPostCode($postcode);
 
 		echo json_encode($item_result, JSON_PRETTY_PRINT);
