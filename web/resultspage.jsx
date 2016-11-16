@@ -1,5 +1,8 @@
 var React = require('react');
 var api = require('./api.js');
+var InputSlider = require('react-input-slider');
+var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup');
+
 
 var mode = {
     SUCCESS:1, FAIL:2, PENDING:3
@@ -15,6 +18,9 @@ var Resultspage = React.createClass({
             synonyms: null,
             selectedCategories: [],
             selectedSynonyms: [],
+            selectedPrice: null,
+            filterPrice: null,
+            showFilters: false,
             search: this.props.search,
             postcode: this.props.postcode,
 
@@ -43,6 +49,7 @@ var Resultspage = React.createClass({
         var message;
         var resultsList;
         var filters;
+        var that = this;
 
         switch(this.state.mode) {
             
@@ -65,8 +72,15 @@ var Resultspage = React.createClass({
                         results={this.state.results}
                         selectedCategories={this.state.selectedCategories}
                         selectedSynonyms={this.state.selectedSynonyms}
+                        selectedPrice={this.state.filterPrice}
                         />
                 );
+
+                var prices = this.state.results.map(function(x) { return x.itemPrice }).sort(function(a, b) {return a-b;});
+
+                var minPrice = Math.ceil( (prices[0] || 0)*2 ) /2;
+                var maxPrice = Math.ceil( (prices.slice(-1)[0] || 0) * 2) /2;
+
                 filters = (
                     <Filters
                         categories={this.state.categories}
@@ -75,16 +89,50 @@ var Resultspage = React.createClass({
                         selectedSynonyms={this.state.selectedSynonyms}
                         onSelectCategory={this._selectCategory}
                         onSelectSynonym={this._selectSynonym}
+                        selectedPrice={this.state.selectedPrice}
+                        onPriceChange={this._priceChange}
+                        onPriceDone={this._updateFilterPrice}
+                        maxPrice={maxPrice}
+                        minPrice={minPrice}
                         />
                 );
                 break
         }
 
+        var toggleFilters = function() {
+            that.setState({ showFilters: !that.state.showFilters });
+        };
+
+        var filtersButton;
+        if(that.state.showFilters) {
+            filtersButton = (
+                <div className='filters-button open' onClick={toggleFilters}>
+                    Hide filters <i className="fa fa-times" />
+                </div>
+            );
+        } else {
+            filtersButton = (
+                <div className='filters-button' onClick={toggleFilters}>
+                    Show filters <i className="fa fa-filter" />
+                </div>
+            );
+        }
+
         return (
             <div className='resultspage'>                
                 <div className='container'>
-                    {message}
-                    {filters}
+                    <div className='message'>
+                        {message}
+                        {filtersButton}
+                    </div>
+                    <ReactCSSTransitionGroup
+                        component="div"
+                        className='transition-box'
+                        transitionName="slide"
+                        transitionEnterTimeout={300}
+                        transitionLeaveTimeout={300} >
+                        {this.state.showFilters && filters}
+                    </ReactCSSTransitionGroup>
                     {resultsList}
                 </div>
             </div>
@@ -133,8 +181,15 @@ var Resultspage = React.createClass({
             if(index > -1) return { selectedCategories: currentState.selectedCategories.slice(0, index).concat(currentState.selectedCategories.slice(index+1)) };
             else return { selectedCategories: currentState.selectedCategories.concat(id) };
         });
-    }
+    },
 
+    _priceChange: function(val) {        
+        this.setState({ selectedPrice: parseFloat( Math.round(val.x*2)/2 ).toFixed(2) });
+    },
+
+    _updateFilterPrice: function() {
+        this.setState({ filterPrice: this.state.selectedPrice });
+    }
 
 });
 
@@ -153,7 +208,7 @@ var Filters = React.createClass({
             var checked = that.props.selectedCategories.indexOf(category.id) != -1;
 
             return (
-                <div className='filter' onClick={()=>that.props.onSelectCategory(category.id)}>
+                <div key={category.id} className='filter' onClick={()=>that.props.onSelectCategory(category.id)}>
                     <input type='checkbox' checked={checked}/> {category.name} <small>({category.count})</small>
                 </div>
             );
@@ -169,12 +224,14 @@ var Filters = React.createClass({
             var checked = that.props.selectedSynonyms.indexOf(synonym.id) != -1;
 
             return (
-                <div className='filter' onClick={()=>that.props.onSelectSynonym(synonym.id)}>
+                <div key={synonym.id} className='filter' onClick={()=>that.props.onSelectSynonym(synonym.id)}>
                     <input type='checkbox' checked={checked}/> {synonym.name} <small>({synonym.count})</small>
                 </div>
             );
 
         });
+
+        var poundSign = '\u00a3';        
 
         return (
             <div className='filters'>
@@ -183,6 +240,30 @@ var Filters = React.createClass({
                 <br />
                 <div>Filters</div>
                 <div>{synonyms}</div>
+                <br />                
+                <div>Max Price: {poundSign}{this.props.selectedPrice || this.props.maxPrice}</div>
+
+                <div className='slider-row'>
+                    <div className='left'>
+                        {poundSign}
+                        {parseFloat(this.props.minPrice).toFixed(2)}
+                    </div>
+                    <div className='middle'>
+                        <InputSlider
+                            className="slider slider-x"
+                            axis='x'
+                            x={parseFloat(this.props.selectedPrice || this.props.maxPrice)}
+                            xmin={parseFloat(this.props.minPrice)}
+                            xmax={parseFloat(this.props.maxPrice)}
+                            onChange={this.props.onPriceChange}
+                            onDragEnd={this.props.onPriceDone}
+                        />
+                    </div>
+                    <div className='right'>
+                        {poundSign}
+                        {parseFloat(this.props.maxPrice).toFixed(2)}
+                    </div>
+                </div>
             </div>
         );
 
@@ -198,13 +279,13 @@ var ResultsList = React.createClass({
         var groupedResults = {};
 
         var filteredResults = this.props.results.filter(function(result) {
-            console.log('test')
             if(that.props.selectedCategories.length) {
                 if(that.props.selectedCategories.indexOf(result.friendlyCategoryId) == -1) return false;
             }
             if(that.props.selectedSynonyms.length) {
                 if(that.props.selectedSynonyms.indexOf(result.friendlySynonymId) == -1) return false;
             }
+            if(parseFloat(that.props.selectedPrice) < parseFloat(result.itemPrice)) return false;
             return true;
         });
 
@@ -263,7 +344,7 @@ var ResultsListItem = React.createClass({
 
                 if(groupsDictionary[key].items.length == 1 && !groupsDictionary[key].items[0].itemSynonym) {
                     return (
-                        <div className='group'>
+                        <div key={key} className='group'>
                             <div className='group-name'>
                                 {groupsDictionary[key].name}
                                 <span className="price">{poundSign}{parseFloat(groupsDictionary[key].items[0].itemPrice).toFixed(2)}</span>                    
@@ -273,7 +354,7 @@ var ResultsListItem = React.createClass({
                 }
 
                 return (
-                    <div className='group'>
+                    <div key={key} className='group'>
                         <div className='group-name'>
                             {groupsDictionary[key].name}
                         </div>
@@ -286,7 +367,7 @@ var ResultsListItem = React.createClass({
 
 
             return (
-                <div className='category'>
+                <div key={key} className='category'>
                     <div className='category-name'>
                         {categoriesDictionary[key].name}
                     </div>
